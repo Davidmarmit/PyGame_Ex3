@@ -1,16 +1,28 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+import pygame
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    pygame.init()
+    pygame.display.set_caption("INOTIME_3")
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    screen_witdh = 1000
+    screen_heigt = 1000
+
+    screen = pygame.display.set_mode([screen_witdh, screen_heigt])
+
+    icon = pygame.image.load("logo.png").convert_alpha()
+    pygame.display.set_icon(icon)
+
+    bkgd = pygame.image.load("mazeOK.png").convert_alpha()
+    bkgd = pygame.transform.scale(bkgd, (1000, 1000))
+    screen.blit(bkgd, (0,0))
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        pygame.display.update()
+
+    pygame.quit()
