@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     set_background()
     player = Player(screen, 0, 715)
-    obstacle = Obstacle(screen)
+
 
     icon = pygame.image.load("images/logo.png").convert_alpha()
     pygame.display.set_icon(icon)

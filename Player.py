@@ -11,17 +11,19 @@ class Player(pygame.sprite.Sprite):
         self.face = pygame.transform.scale(self.face, (70, 70))
         self.x = x
         self.y = y
+        self.obstacles = pygame.sprite.Group()
         self.load_player()
         self.footprints = []
+        self.rect = self.face.get_rect()
 
     def load_player(self):
+        self.set_background()
         self.screen.blit(self.face, (self.x, self.y))
         pygame.display.flip()
         pygame.display.update()
 
     def handle_keys(self):
         key = pygame.key.get_pressed()
-        dist = 1
         if key[pygame.K_LEFT]:
             self.set_background()
             self.x += 50
@@ -35,11 +37,12 @@ class Player(pygame.sprite.Sprite):
             self.x += 80
             self.screen.blit(self.face, (self.x, self.y))
         if key[pygame.K_UP]:
-            self.set_background()
-            self.y += 50
-            self.set_footprints(360)
-            self.y -= 80
-            self.screen.blit(self.face, (self.x, self.y))
+            if not self.collides_obstacle():
+                self.set_background()
+                self.y += 50
+                self.set_footprints(360)
+                self.y -= 80
+                self.screen.blit(self.face, (self.x, self.y))
 
         if key[pygame.K_DOWN]:
             self.set_background()
@@ -59,11 +62,26 @@ class Player(pygame.sprite.Sprite):
         background = pygame.image.load("images/mazeOK.png").convert_alpha()
         background = pygame.transform.scale(background, (1000, 1000))
         self.screen.blit(background, (0, 0))
-        obstacle = Obstacle(self.screen)
+        self.create_obstacles()
 
+    def create_obstacles(self):
+        # self.rect3 = pygame.draw.rect(screen, (0, 128, 128), (400, 0, 100, 400))
+        obstacle = Obstacle(self.screen, 10000, 100)
+        obstacle2 = Obstacle(self.screen, 100, 500)
+        self.obstacles.add(Obstacle(self.screen, 10000, 100))
+        self.obstacles.add(Obstacle(self.screen, 100, 500))
+
+    # surface fill get rect
     def collides_obstacle(self):
-        obstacle = Obstacle(self.screen)
+        collide = False
+        for obstacle in self.obstacles:
+            # if self.rect.colliderect(obstacle):
+            if pygame.sprite.spritecollideany(self, self.obstacles):
+                print("a")
+                collide = True
 
-        if pygame.sprite.spritecollide(self, obstacle, False):
-            return True
-        return False
+        return collide
+
+        # if pygame.sprite.spritecollide(self, self.obstacles, False):
+        #   return True
+        # return False
