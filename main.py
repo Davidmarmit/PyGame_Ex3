@@ -5,6 +5,7 @@ from Player import Player
 
 
 def set_background():
+    pass
     background = pygame.image.load("images/mazeOK.png").convert_alpha()
     background = pygame.transform.scale(background, (1000, 1000))
     screen.blit(background, (0, 0))
@@ -21,7 +22,6 @@ if __name__ == '__main__':
     set_background()
     player = Player(screen, 0, 715)
 
-
     icon = pygame.image.load("images/logo.png").convert_alpha()
     pygame.display.set_icon(icon)
 
@@ -33,10 +33,12 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                player.handle_keys()
+                pygame.display.update()
 
-        player.handle_keys()
+        # player.handle_keys()
+        # pygame.display.update()
 
-        pygame.display.update()
-
-    clock.tick(40)
+    clock.tick(100)
 pygame.quit()
