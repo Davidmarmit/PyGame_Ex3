@@ -98,14 +98,17 @@ class Player(pygame.sprite.Sprite):
                 self.x += 100
                 self.screen.blit(self.image, (self.x, self.y))
                 if len(list_win):
-                    time.sleep(5)
+                    pygame.mixer.Sound.play(self.win_sound)
+                    pygame.display.update() #Update per ficar el personatge dins la casella de victoria
+                    print("win")
+                    time.sleep(2)
                     self.x = 10
                     self.y = 715
                     self.set_background()
                     self.screen.blit(self.image, (self.x, self.y))
-                    print("win")
+
+
                     self.footprints = []
-                    pygame.mixer.Sound.play(self.win_sound)
                 else:
                     print("bien")
                     pygame.mixer.Sound.play(self.walk_sound)
