@@ -9,13 +9,16 @@ class Obstacle(pygame.sprite.Sprite):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.screen = screen
-        self.image = pygame.Surface((size_x, size_y))
-        self.image.fill((0, 0, 0))
+        self.image = pygame.image.load("images/black.jpg").convert()
+        self.image = pygame.transform.scale(self.image, (size_x, size_y))
+
         self.rect = self.image.get_rect()
         self.rect.x = pos_x
         self.rect.y = pos_y
         self.update_obstacle()
 
-
     def update_obstacle(self):
         self.screen.blit(self.image, (self.pos_x, self.pos_y))
+        pixel_rect = self.image.get_bounding_rect()
+        trimmed_surface = pygame.Surface(pixel_rect.size)
+        trimmed_surface.blit(self.screen, (0, 0), pixel_rect)

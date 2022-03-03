@@ -13,44 +13,97 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, screen, x, y):
         super().__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/player.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
-        self.mask_face = pygame.mask.from_surface(self.image)
-        self.player_ko = pygame.image.load('images/player_ko.png')
-        self.player_ko = pygame.transform.scale(self.player_ko, (70, 70))
-
         self.x = x
         self.y = y
-        self.obstacles = pygame.sprite.Group()
-        self.goal_sprite = pygame.sprite.Group()
-        self.goal = Goal(self.screen)
-        self.goal_sprite.add(self.goal)
-        self.footprints = []
+
+        # initializes player image, scales it, and masks it
+        self.image = pygame.image.load('images/player_shadow.png')
+        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.mask_face = pygame.mask.from_surface(self.image)
+
+        # sets the image rect to the same position as the image:
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-        self.load_display()
+
+        # initializes player image and scales it:
+        self.player_ko = pygame.image.load('images/player_ko.png')
+        self.player_ko = pygame.transform.scale(self.player_ko, (70, 70))
+
+        # creates sprite groups:
+        self.obstacles = pygame.sprite.Group()
+        self.goal_sprite = pygame.sprite.Group()
+        self.goal = Goal(self.screen, 900, 700)
+        self.goal_sprite.add(self.goal)
+
+        self.footprints = []
+        self.current_map1 = True
+        self.load_map1()  # load map of obstacles
+
+        # initialize sounds
         self.walk_sound = pygame.mixer.Sound("sounds/jumps.wav")
         self.collide_sound = pygame.mixer.Sound("sounds/boom.wav")
         self.win_sound = pygame.mixer.Sound("sounds/win.wav")
 
-    def create_obstacles(self):
+    def create_obstacles_map1(self):
+        self.current_map1 = True
+        self.obstacles = pygame.sprite.Group()
         self.obstacles.add(Obstacle(self.screen, 1000, 100, 0, 800))  # margin display Bottom
         self.obstacles.add(Obstacle(self.screen, 100, 1000, -100, -100))  # margin display left
-        self.obstacles.add(Obstacle(self.screen, 1000, 100, 0, 0))  # H
-        self.obstacles.add(Obstacle(self.screen, 100, 700, 0, 0))
-        self.obstacles.add(Obstacle(self.screen, 600, 100, 200, 200))
-        self.obstacles.add(Obstacle(self.screen, 100, 700, 200, 300))
-        self.obstacles.add(Obstacle(self.screen, 100, 700, 900, 0))  # V
-        self.obstacles.add(Obstacle(self.screen, 1000, 100, 400, 400))  # H
-        # self.obstacles.add(Obstacle(self.screen, 100, 200, 400, 400))
+
+        self.obstacles.add(Obstacle(self.screen, 1000, 100, 0, 0))  # Horizontal top
+        self.obstacles.add(Obstacle(self.screen, 100, 700, 0, 0))  # Vertical left
+
+        self.obstacles.add(Obstacle(self.screen, 600, 100, 200, 200))  # Horizontal center-top
+        self.obstacles.add(Obstacle(self.screen, 100, 700, 200, 300))  # Vertical center-left
+
+        self.obstacles.add(Obstacle(self.screen, 100, 700, 900, 0))  # Vertical right
+
         self.obstacles.add(Obstacle(self.screen, 100, 300, 600, 400))
         self.obstacles.add(Obstacle(self.screen, 100, 300, 400, 600))
         self.obstacles.add(Obstacle(self.screen, 100, 100, 700, 600))
+        self.obstacles.add(Obstacle(self.screen, 500, 100, 400, 400))  # Horizontal center bottom
 
-    def load_display(self):
+    def create_obstacles_map2(self):
+        self.current_map1 = False
+        self.obstacles = pygame.sprite.Group()
+        self.obstacles.add(Obstacle(self.screen, 1000, 100, 0, 800))  # margin display Bottom
+        self.obstacles.add(Obstacle(self.screen, 100, 1000, -100, -100))  # margin display left
+
+        self.obstacles.add(Obstacle(self.screen, 1000, 100, 0, 0))  # Horizontal top
+        self.obstacles.add(Obstacle(self.screen, 100, 700, 0, 0))  # Vertical left
+
+        self.obstacles.add(Obstacle(self.screen, 600, 100, 200, 200))  # Horizontal center-top
+        self.obstacles.add(Obstacle(self.screen, 100, 400, 200, 300))  # Vertical center-left
+
+        self.obstacles.add(Obstacle(self.screen, 100, 700, 900, 200))  # Vertical right
+        self.obstacles.add(Obstacle(self.screen, 100, 200, 700, 100))
+        self.obstacles.add(Obstacle(self.screen, 100, 300, 600, 400))
+        self.obstacles.add(Obstacle(self.screen, 100, 300, 400, 600))
+        self.obstacles.add(Obstacle(self.screen, 100, 100, 700, 600))
+        self.obstacles.add(Obstacle(self.screen, 500, 100, 400, 400))  # Horizontal center bottom
+
+    # settings to use map1:
+    def load_map1(self):
+        self.footprints = []
+        self.goal_sprite = pygame.sprite.Group()
+        self.goal = Goal(self.screen, 900, 700)
+        self.goal_sprite.add(self.goal)
+        self.create_obstacles_map1()
         self.set_background()
-        self.create_obstacles()
+        self.screen.blit(self.image, (self.x, self.y))
+        pygame.display.flip()
+        pygame.display.update()
+
+    # settings to use map2:
+    def load_map2(self):
+        self.footprints = []
+        self.goal_sprite = pygame.sprite.Group()
+        self.goal = Goal(self.screen, 900, 100)
+        self.goal_sprite.add(self.goal)
+        self.create_obstacles_map2()
+        self.set_background()
+
         self.screen.blit(self.image, (self.x, self.y))
         pygame.display.flip()
         pygame.display.update()
@@ -99,16 +152,15 @@ class Player(pygame.sprite.Sprite):
                 self.screen.blit(self.image, (self.x, self.y))
                 if len(list_win):
                     pygame.mixer.Sound.play(self.win_sound)
-                    pygame.display.update() #Update per ficar el personatge dins la casella de victoria
+                    pygame.display.update()  # Update per ficar el personatge dins la casella de victoria
                     print("win")
                     time.sleep(2)
                     self.x = 10
                     self.y = 715
-                    self.set_background()
-                    self.screen.blit(self.image, (self.x, self.y))
-
-
-                    self.footprints = []
+                    if self.current_map1:
+                        self.load_map2()
+                    else:
+                        self.load_map1()
                 else:
                     print("bien")
                     pygame.mixer.Sound.play(self.walk_sound)
@@ -182,8 +234,9 @@ class Player(pygame.sprite.Sprite):
         background = pygame.image.load("images/background.jpg").convert()
         background = pygame.transform.scale(background, (1000, 800))
         self.screen.blit(background, (0, 0))
-        self.update_boxes()  # update obstacles
+        self.update_boxes()
 
+    # update obstacles and goal
     def update_boxes(self):
         self.goal.update_goal()
         for obstacle in self.obstacles:
