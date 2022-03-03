@@ -56,9 +56,11 @@ class Player(pygame.sprite.Sprite):
             list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
                 print("collide")
+                pygame.mixer.Sound.play(self.collide_sound)
                 collide = True
             if not collide:
                 print("bien")
+                pygame.mixer.Sound.play(self.walk_sound)
                 self.set_background()
                 self.x += 50
                 self.set_footprints(+90)
@@ -78,7 +80,6 @@ class Player(pygame.sprite.Sprite):
                 collide = True
             if not collide:
                 print("bien")
-                pygame.mixer.Sound.play(self.walk_sound)
                 pygame.mixer.Sound.play(self.walk_sound)
                 self.set_background()
                 self.x -= 50
