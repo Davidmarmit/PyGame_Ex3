@@ -7,18 +7,19 @@ from Obstacle import Obstacle
 class Player(pygame.sprite.Sprite):
     # constructor Player: needs display, and start position
     def __init__(self, screen, x, y):
-        # super().__init__()
-        pygame.sprite.Sprite.__init__(self)
-
+        super().__init__()
         self.screen = screen
-        self.face = pygame.image.load('images/player.png')
-        self.face = pygame.transform.scale(self.face, (70, 70))
+        self.image = pygame.image.load('images/player.png')
+        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.mask_face = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.obstacles = pygame.sprite.Group()
 
         self.footprints = []
-        self.rect = self.face.get_rect()
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
         self.load_player()
 
     def load_player(self):
@@ -28,50 +29,83 @@ class Player(pygame.sprite.Sprite):
         self.obstacles.add(obstacle)
         self.obstacles.add(obstacle2)
 
-        self.screen.blit(self.face, (self.x, self.y))
+        self.screen.blit(self.image, (self.x, self.y))
         pygame.display.flip()
         pygame.display.update()
 
     def handle_keys(self):
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
-            self.rect.move_ip(self.x - 50, self.y)
-            if not self.collide_obstacle():
+            self.move_left()
+            collide = False
+            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False)
+            if len(list_collide):
+                print("collide")
+                collide = True
+            if not collide:
+                print("bien")
                 self.set_background()
                 self.x += 50
-                self.set_footprints(90)  # angle rotation
+                self.set_footprints(+90)
                 self.x -= 100
-                self.screen.blit(self.face, (self.x, self.y))
+                self.screen.blit(self.image, (self.x, self.y))
             else:
-                self.rect.move_ip(self.x + 50, self.y)
+                self.set_background()
+                self.move_right()
+
         if key[pygame.K_RIGHT]:
-            if not self.collide_obstacle():
+            self.move_right()
+            collide = False
+            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False)
+            if len(list_collide):
+                print("collide")
+                collide = True
+            if not collide:
+                print("bien")
                 self.set_background()
                 self.x -= 50
                 self.set_footprints(-90)
-                self.x += 80
-                self.screen.blit(self.face, (self.x, self.y))
+                self.x += 100
+                self.screen.blit(self.image, (self.x, self.y))
+            else:
+                self.set_background()
+                self.move_left()
+
         if key[pygame.K_UP]:
-            self.y -= 50
-            #self.rect.move_ip(self.x, self.y)
-            if not self.collide_obstacle():
+            self.move_up()
+            collide = False
+            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False)
+            if len(list_collide):
+                print("collide")
+                collide = True
+            if not collide:
                 print("bien")
                 self.set_background()
-                # self.y += 50
-                # self.set_footprints(360)
-                # self.y -= 100
-                self.screen.blit(self.face, (self.x, self.y))
+                self.y += 50
+                self.set_footprints(360)
+                self.y -= 100
+                self.screen.blit(self.image, (self.x, self.y))
             else:
-                pass
-                #self.y += 50
-                #self.rect.move_ip(self.x, self.y)
+                self.set_background()
+                self.move_down()
 
         if key[pygame.K_DOWN]:
-            self.set_background()
-            self.y -= 50
-            self.set_footprints(-180)
-            self.y += 80
-            self.screen.blit(self.face, (self.x, self.y))
+            self.move_down()
+            collide = False
+            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False)
+            if len(list_collide):
+                print("collide")
+                collide = True
+            if not collide:
+                print("bien")
+                self.set_background()
+                self.y -= 50
+                self.set_footprints(180)
+                self.y += 100
+                self.screen.blit(self.image, (self.x, self.y))
+            else:
+                self.set_background()
+                self.move_up()
 
     def set_footprints(self, angle):
         footprint = pygame.image.load("images/footprint.png").convert_alpha()
@@ -81,21 +115,37 @@ class Player(pygame.sprite.Sprite):
         self.screen.blit(footprint, (self.x, self.y))
 
     def set_background(self):
-        background = pygame.image.load("images/mazeOK.png").convert_alpha()
-        background = pygame.transform.scale(background, (1000, 1000))
-        self.screen.blit(background, (0, 0))
+        # background = pygame.image.load("images/mazeOK.png").convert_alpha()
+        # background = pygame.transform.scale(background, (1000, 1000))
+        self.screen.fill((0, 120, 120))
+        # self.screen.blit(background, (0, 0))
         self.update_obstacles()  # update obstacles
 
     def update_obstacles(self):
         for obstacle in self.obstacles:
             obstacle.update_obstacle()
 
-    # if player collides with any obstacle
-    def collide_obstacle(self):
-        collide = False
-        # if pygame.sprite.spritecollideany(self, self.obstacles):
-        if pygame.sprite.spritecollide(self, self.obstacles, False):
-            print("collide")
-            collide = True
+    def move_up(self):
+        self.y -= 50
+        self.screen.blit(self.image, (self.x, self.y))
+        self.update_rect()
 
-        return collide
+    def move_down(self):
+        self.y += 50
+        self.screen.blit(self.image, (self.x, self.y))
+        self.update_rect()
+        # pygame.draw.rect(self.screen, (0, 0, 0), self.rect)
+
+    def move_left(self):
+        self.x -= 50
+        self.screen.blit(self.image, (self.x, self.y))
+        self.update_rect()
+
+    def move_right(self):
+        self.x += 50
+        self.screen.blit(self.image, (self.x, self.y))
+        self.update_rect()
+
+    def update_rect(self):
+        self.rect.x = self.x
+        self.rect.y = self.y

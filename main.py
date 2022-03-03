@@ -35,10 +35,10 @@ if __name__ == '__main__':
                 running = False
             if event.type == pygame.KEYDOWN:
                 player.handle_keys()
-                pygame.display.update()
+            pygame.display.update()
 
         # player.handle_keys()
         # pygame.display.update()
 
-    clock.tick(100)
+    clock.tick(30)
 pygame.quit()
