@@ -22,6 +22,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
         self.load_player()
+        self.walk_sound = pygame.mixer.Sound("sounds/jumps.wav")
+        self.collide_sound = pygame.mixer.Sound("sounds/boom.wav")
+        self.win_sound = pygame.mixer.Sound("sounds/win.wav")
 
 
     def create_obstacles(self):
@@ -45,6 +48,7 @@ class Player(pygame.sprite.Sprite):
         pygame.display.update()
 
     def handle_keys(self):
+
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
             self.move_left()
@@ -70,9 +74,12 @@ class Player(pygame.sprite.Sprite):
             list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
                 print("collide")
+                pygame.mixer.Sound.play(self.collide_sound)
                 collide = True
             if not collide:
                 print("bien")
+                pygame.mixer.Sound.play(self.walk_sound)
+                pygame.mixer.Sound.play(self.walk_sound)
                 self.set_background()
                 self.x -= 50
                 self.set_footprints(-90)
@@ -88,9 +95,11 @@ class Player(pygame.sprite.Sprite):
             list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
                 print("collide")
+                pygame.mixer.Sound.play(self.collide_sound)
                 collide = True
             if not collide:
                 print("bien")
+                pygame.mixer.Sound.play(self.walk_sound)
                 self.set_background()
                 self.y += 50
                 self.set_footprints(360)
@@ -106,9 +115,11 @@ class Player(pygame.sprite.Sprite):
             list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
                 print("collide")
+                pygame.mixer.Sound.play(self.collide_sound)
                 collide = True
             if not collide:
                 print("bien")
+                pygame.mixer.Sound.play(self.walk_sound)
                 self.set_background()
                 self.y -= 50
                 self.set_footprints(180)
