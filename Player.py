@@ -1,6 +1,7 @@
 import pygame
 
 from Obstacle import Obstacle
+from Goal import Goal
 
 
 # class Player
@@ -15,20 +16,30 @@ class Player(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.obstacles = pygame.sprite.Group()
-
+        self.goal = Goal(self.screen)
         self.footprints = []
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
         self.load_player()
 
+
+    def create_obstacles(self):
+        self.obstacles.add(Obstacle(self.screen, 1000, 100, 0, 800))  # margin display Bottom
+        self.obstacles.add(Obstacle(self.screen, 100, 1000, -100, -100))  # margin display left
+        self.obstacles.add(Obstacle(self.screen, 1000, 100, 0, 0))  # H
+        self.obstacles.add(Obstacle(self.screen, 100, 700, 0, 0))
+        self.obstacles.add(Obstacle(self.screen, 600, 100, 200, 200))
+        self.obstacles.add(Obstacle(self.screen, 100, 700, 200, 300))
+        self.obstacles.add(Obstacle(self.screen, 100, 700, 900, 0))
+        self.obstacles.add(Obstacle(self.screen, 1000, 100, 400, 400))  # H
+        self.obstacles.add(Obstacle(self.screen, 100, 200, 400, 400))
+        self.obstacles.add(Obstacle(self.screen, 100, 200, 600, 400))
+        self.obstacles.add(Obstacle(self.screen, 100, 200, 400, 700))
+
     def load_player(self):
         self.set_background()
-        obstacle = Obstacle(self.screen, 1000, 100)
-        obstacle2 = Obstacle(self.screen, 100, 700)
-        self.obstacles.add(obstacle)
-        self.obstacles.add(obstacle2)
-
+        self.create_obstacles()
         self.screen.blit(self.image, (self.x, self.y))
         pygame.display.flip()
         pygame.display.update()
@@ -38,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         if key[pygame.K_LEFT]:
             self.move_left()
             collide = False
-            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False)
+            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
                 print("collide")
                 collide = True
@@ -56,7 +67,7 @@ class Player(pygame.sprite.Sprite):
         if key[pygame.K_RIGHT]:
             self.move_right()
             collide = False
-            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False)
+            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
                 print("collide")
                 collide = True
@@ -74,7 +85,7 @@ class Player(pygame.sprite.Sprite):
         if key[pygame.K_UP]:
             self.move_up()
             collide = False
-            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False)
+            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
                 print("collide")
                 collide = True
@@ -92,7 +103,7 @@ class Player(pygame.sprite.Sprite):
         if key[pygame.K_DOWN]:
             self.move_down()
             collide = False
-            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False)
+            list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
                 print("collide")
                 collide = True
@@ -119,9 +130,10 @@ class Player(pygame.sprite.Sprite):
         # background = pygame.transform.scale(background, (1000, 1000))
         self.screen.fill((0, 120, 120))
         # self.screen.blit(background, (0, 0))
-        self.update_obstacles()  # update obstacles
+        self.update_boxes()  # update obstacles
 
-    def update_obstacles(self):
+    def update_boxes(self):
+        self.goal.update_goal()
         for obstacle in self.obstacles:
             obstacle.update_obstacle()
 
