@@ -19,8 +19,8 @@ if __name__ == '__main__':
     screen_high = 800
     screen = pygame.display.set_mode([screen_width, screen_high])
 
-    set_background()
-    player = Player(screen, 0, 715)
+    #set_background()
+    player = Player(screen, 10, 715)
 
     icon = pygame.image.load("images/logo.png").convert_alpha()
     pygame.display.set_icon(icon)

@@ -15,7 +15,7 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect.x = pos_x
         self.rect.y = pos_y
         self.update_obstacle()
-        print("o")
+
 
     def update_obstacle(self):
         self.screen.blit(self.image, (self.pos_x, self.pos_y))
