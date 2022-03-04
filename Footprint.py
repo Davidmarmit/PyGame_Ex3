@@ -1,7 +1,9 @@
 import pygame
 
 
+# Class Footprint
 class Footprint(object):
+    # Definition of Footprint class, responsible for the footprint images behind the character
     def __init__(self, screen, x, y, angle):
         self.screen = screen
         self.x = x
@@ -11,9 +13,12 @@ class Footprint(object):
         self.fp = pygame.transform.rotate(self.fp, angle)
         self.update_fp()
 
+    # Definition of update_fp, which updates the character's footprint whenever needed
     def update_fp(self):
         self.screen.blit(self.fp, (self.x, self.y))
 
+    # Definition of apply_tranparency, which updates the transparency of the footprint image according to the
+    # player's movement
     def apply_transparency(self, num):
         alpha = 0
         if num == 1:

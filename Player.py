@@ -45,6 +45,9 @@ class Player(pygame.sprite.Sprite):
         self.collide_sound = pygame.mixer.Sound("sounds/boom.wav")
         self.win_sound = pygame.mixer.Sound("sounds/win.wav")
 
+    # Function that creates the obstacles in the map's game
+    # We define obstacles such as rectangles inside the map that define the labyrinth and the map's borders
+    # These are for the first map
     def create_obstacles_map1(self):
         self.current_map1 = True
         self.obstacles = pygame.sprite.Group()
@@ -64,6 +67,9 @@ class Player(pygame.sprite.Sprite):
         self.obstacles.add(Obstacle(self.screen, 100, 100, 700, 600))
         self.obstacles.add(Obstacle(self.screen, 500, 100, 400, 400))  # Horizontal center bottom
 
+    # Function that creates the obstacles in the map's game
+    # We define obstacles such as rectangles inside the map that define the labyrinth and the map's borders
+    # These are for the second map
     def create_obstacles_map2(self):
         self.current_map1 = False
         self.obstacles = pygame.sprite.Group()
@@ -108,22 +114,28 @@ class Player(pygame.sprite.Sprite):
         pygame.display.flip()
         pygame.display.update()
 
+    # Function to load the player_ko image when a collision occurred
     def load_player_ko(self):
         self.screen.blit(self.player_ko, (self.x, self.y))
 
+    # Function to execute the actions needed when the player uses the corresponding keys, such as arrow up, down,
+    # left, right.
     def handle_keys(self):
 
+        # We look for the key that has been pressed
         key = pygame.key.get_pressed()
+
+        # Left arrow key
         if key[pygame.K_LEFT]:
             self.move_left()
             collide = False
+
+            # Check for collisions
             list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
-                print("collide")
                 pygame.mixer.Sound.play(self.collide_sound)
                 collide = True
             if not collide:
-                print("bien")
                 pygame.mixer.Sound.play(self.walk_sound)
                 self.set_background()
                 self.x += 50
@@ -135,12 +147,13 @@ class Player(pygame.sprite.Sprite):
                 self.move_right()
                 self.load_player_ko()
 
+        # Right arrow key
         if key[pygame.K_RIGHT]:
             self.move_right()
             collide = False
             list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
-                print("collide")
+
                 pygame.mixer.Sound.play(self.collide_sound)
                 collide = True
             if not collide:
@@ -153,7 +166,6 @@ class Player(pygame.sprite.Sprite):
                 if len(list_win):
                     pygame.mixer.Sound.play(self.win_sound)
                     pygame.display.update()  # Update per ficar el personatge dins la casella de victoria
-                    print("win")
                     time.sleep(2)
                     self.x = 10
                     self.y = 715
@@ -162,7 +174,6 @@ class Player(pygame.sprite.Sprite):
                     else:
                         self.load_map1()
                 else:
-                    print("bien")
                     pygame.mixer.Sound.play(self.walk_sound)
 
             else:
@@ -170,16 +181,15 @@ class Player(pygame.sprite.Sprite):
                 self.move_left()
                 self.load_player_ko()
 
+        # Up arrow key
         if key[pygame.K_UP]:
             self.move_up()
             collide = False
             list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
-                print("collide")
                 pygame.mixer.Sound.play(self.collide_sound)
                 collide = True
             if not collide:
-                print("bien")
                 pygame.mixer.Sound.play(self.walk_sound)
                 self.set_background()
                 self.y += 50
@@ -191,16 +201,15 @@ class Player(pygame.sprite.Sprite):
                 self.move_down()
                 self.load_player_ko()
 
+        # Down arrow key
         if key[pygame.K_DOWN]:
             self.move_down()
             collide = False
             list_collide = pygame.sprite.spritecollide(self, self.obstacles, False, pygame.sprite.collide_mask)
             if len(list_collide):
-                print("collide")
                 pygame.mixer.Sound.play(self.collide_sound)
                 collide = True
             if not collide:
-                print("bien")
                 pygame.mixer.Sound.play(self.walk_sound)
                 self.set_background()
                 self.y -= 50
@@ -212,6 +221,7 @@ class Player(pygame.sprite.Sprite):
                 self.move_up()
                 self.load_player_ko()
 
+    # Function that sets the main characters footprints on the correct angle
     def set_footprints(self, angle):
         # footprint = pygame.image.load("images/footprint.png").convert_alpha()
         # footprint = pygame.transform.scale(footprint, (70, 70))
@@ -220,6 +230,8 @@ class Player(pygame.sprite.Sprite):
         self.footprints.append(fp)
         self.update_footprints()
 
+    # Function that updates all the footprints that have been created with the correct opacity to create the fading
+    # effect
     def update_footprints(self):
         cont = len(self.footprints)
         if cont > 1:
@@ -230,6 +242,7 @@ class Player(pygame.sprite.Sprite):
                 cont -= 1
                 num_fp += 1
 
+    # Function that sets the background
     def set_background(self):
         background = pygame.image.load("images/background.jpg").convert()
         background = pygame.transform.scale(background, (1000, 800))
@@ -242,27 +255,32 @@ class Player(pygame.sprite.Sprite):
         for obstacle in self.obstacles:
             obstacle.update_obstacle()
 
+    # Function that moves up the character
     def move_up(self):
         self.y -= 50
         self.screen.blit(self.image, (self.x, self.y))
         self.update_rect()
 
+    # Function that moves down the character
     def move_down(self):
         self.y += 50
         self.screen.blit(self.image, (self.x, self.y))
         self.update_rect()
         # pygame.draw.rect(self.screen, (0, 0, 0), self.rect)
 
+    # Function that moves left the character
     def move_left(self):
         self.x -= 50
         self.screen.blit(self.image, (self.x, self.y))
         self.update_rect()
 
+    # Function that moves right the character
     def move_right(self):
         self.x += 50
         self.screen.blit(self.image, (self.x, self.y))
         self.update_rect()
 
+    # Function that updates the character (setting it to x position)
     def update_rect(self):
         self.rect.x = self.x
         self.rect.y = self.y
